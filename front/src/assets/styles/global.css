@@ -1,0 +1,270 @@
+/* src/assets/styles/global.css */
+
+/* Variáveis de cores */
+:root {
+  --color-primary: #561c24;
+  --color-secondary: #6d2932;
+  --color-three: #e8d8c4;
+  --color-four: #ffffff;
+  --color-text: #561c24;
+  --color-white: #d6d6d6;
+  --color-muted: #888;
+  --color-body: #e9e3dc;
+  --color-bg: #fff;
+}
+
+/* Reset e base */
+* {
+  margin: 0;
+  padding: 0.1rem;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-body);
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text);
+  padding: 0;
+  overflow-x: hidden;
+  opacity: 0.9;
+  
+}
+
+
+
+h1, h2 {
+  color: var(--color-text);
+
+}
+
+p {
+  font-weight: bold;
+}
+
+a {
+  color: var(--color-bg);
+  text-decoration: none;
+}
+
+input,
+textarea {
+  border: none;
+  border-bottom: 2px solid var(--color-primary);
+  background: transparent;
+  padding: 8px 4px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-four);
+  outline: none;
+}
+
+input::placeholder,
+select,
+textarea::placeholder {
+  opacity: 1;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+
+
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--color-text);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: var(--color-text);
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Tela opaca */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: var(--color-primary);
+}
+
+.modal-content {
+  background-color: var(--color-white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+}
+
+/* Container do formulário */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-button {
+  display: block;
+  margin: 10px auto 0; /* Centraliza horizontalmente e dá espaço acima */
+  padding: 4px 8px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 45%;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #6D28D9, #3B82F6);
+
+}
+
+
+.delete-button {
+  background: transparent;
+  border: none;
+  color: #d11a2a;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  margin-left: 8px;
+  padding: 2px;
+}
+
+.delete-button:hover {
+  color: #a50e1d;
+}
+
+
+.delete-button:hover {
+  background-color: var(--color-secondary);
+}
+
+.button-createTask {
+  display: block;
+  margin: 10px auto 0; /* Centraliza horizontalmente e dá espaço acima */
+  padding: 4px 8px;
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  color: var(--color-white);
+}
+
+
+.task-item {
+  border-bottom: 0px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--color-bg);
+  border-radius: 8px;
+}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-row {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  color: var(--color-text);
+}
+
+.task-title {
+  margin-bottom: 0.5rem;
+}
+
+.task-details-scroll {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  white-space: nowrap;
+}
+
+.task-details-scroll p {
+  margin: 0;
+  flex-shrink: 0;
+  min-width: max-content;
+}
+
+.task-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--color-four);
+  border-radius: 8px;
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+.task-item strong {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.task-details {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  white-space: nowrap;
+}
+
+.task-details p {
+  margin: 0;
+  flex-shrink: 0;
+  min-width: max-content;
+}
+
+
+.modal {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+.hidden {
+  display: none;
+}
+.show {
+  display: block;
+}
