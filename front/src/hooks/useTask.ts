@@ -1,7 +1,6 @@
-// src/hooks/useTask.ts
 import { useEffect, useState, useCallback } from 'react';
 import { Task } from '../types/Task';
-import { fetchTasks, deleteTask, updateTask } from '../services/api';
+import { fetchTasks, deleteTask, updateTaskStatus, updateTask, createTask } from '../services/api'; // Importando a função createTask (que você deve implementar)
 
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -28,18 +27,48 @@ export function useTasks() {
   const removeTask = async (id: number) => {
     try {
       await deleteTask(id);
-      await loadTasks(); // Atualiza após exclusão
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id)); // Removendo do estado diretamente
     } catch (err) {
       console.error('Erro ao excluir tarefa:', err);
     }
   };
 
+  const updateTaskStatusHandler = async (
+    taskId: number,
+    status: 'done' | 'pending' | 'not done'
+  ) => {
+    try {
+      await updateTaskStatus(taskId, status);
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, status } : task
+        )
+      );
+    } catch (err) {
+      console.error('Erro ao atualizar status da tarefa:', err);
+    }
+  };
+
   const updateTaskHandler = async (updatedTask: Task) => {
     try {
-      await updateTask(updatedTask);
-      await loadTasks(); // Atualiza após edição
+      await updateTask(updatedTask); // Chama o updateTask da API
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? updatedTask : task
+        )
+      );
     } catch (err) {
       console.error('Erro ao atualizar tarefa:', err);
+    }
+  };
+
+  // Função para adicionar nova tarefa
+  const addTask = async (newTask: Task) => {
+    try {
+      const createdTask = await createTask(newTask); // Adiciona a tarefa via API
+      setTasks((prevTasks) => [...prevTasks, createdTask]); // Adiciona a tarefa criada no estado local
+    } catch (err) {
+      console.error('Erro ao adicionar tarefa:', err);
     }
   };
 
@@ -49,6 +78,8 @@ export function useTasks() {
     error,
     removeTask,
     updateTask: updateTaskHandler,
+    updateTaskStatus: updateTaskStatusHandler,
+    addTask, // Função de adicionar tarefa
     refetch: loadTasks, // Aqui está o `refetch`
   };
 }

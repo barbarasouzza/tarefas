@@ -7,7 +7,6 @@ interface CreateTaskFormProps {
   onClose: () => void;
 }
 
-
 const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Task>({
@@ -23,7 +22,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
   });
 
   const priorityMap = {
-    'alta': 'high',
+    alta: 'high',
     média: 'medium',
     baixa: 'low',
   } as const;
@@ -41,27 +40,25 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
     'não feito': 'not done',
   } as const;
 
-// src/components/CreateTaskForm.tsx
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  try {
-    const translatedTask: Task = {
-      ...formData,
-      priority: priorityMap[formData.priority as keyof typeof priorityMap] || 'medium',
-      recurrence: recurrenceMap[formData.recurrence as keyof typeof recurrenceMap] || 'daily',
-      status: statusMap[formData.status as keyof typeof statusMap] || 'pending',
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const translatedTask: Task = {
+        ...formData,
+        priority: priorityMap[formData.priority as keyof typeof priorityMap] || 'medium',
+        recurrence: recurrenceMap[formData.recurrence as keyof typeof recurrenceMap] || 'daily',
+        status: statusMap[formData.status as keyof typeof statusMap] || 'pending',
+      };
 
-    await createTask(translatedTask); // só aqui faz a criação real
-    await onCreate(translatedTask);   // notifica o Header
-    onClose();                        // fecha o modal
-  } catch (error) {
-    console.error('Erro ao criar tarefa:', error);
-  }
-  setIsSubmitting(false);
-};
-
+      await createTask(translatedTask);
+      await onCreate(translatedTask);
+      onClose();
+    } catch (error) {
+      console.error('Erro ao criar tarefa:', error);
+    }
+    setIsSubmitting(false);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -69,7 +66,10 @@ const handleSubmit = async (e: React.FormEvent) => {
     const { name, value } = e.target;
 
     if (name === 'custom_days') {
-      setFormData((prev) => ({ ...prev, custom_days: value.split(',').map((d) => d.trim()) }));
+      setFormData((prev) => ({
+        ...prev,
+        custom_days: value.split(',').map((d) => d.trim()),
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -81,12 +81,26 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <input placeholder='Nome' type="text" name="name" value={formData.name} onChange={handleChange} required />
+        <label htmlFor="name">Tarefa</label>
+        <input
+          id="name"
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
       </div>
 
       <div>
-        <label>Prioridade</label>
-        <select name="priority" value={formData.priority} onChange={handleChange}>
+        <label htmlFor="priority">Prioridade</label>
+        <select
+          id="priority"
+          name="priority"
+          value={formData.priority}
+          onChange={handleChange}
+        >
+          <option value="">Selecione...</option>
           <option value="alta">Alta</option>
           <option value="média">Média</option>
           <option value="baixa">Baixa</option>
@@ -94,8 +108,14 @@ const handleSubmit = async (e: React.FormEvent) => {
       </div>
 
       <div>
-        <label>Recorrência</label>
-        <select name="recurrence" value={formData.recurrence} onChange={handleChange}>
+        <label htmlFor="recurrence">Recorrência</label>
+        <select
+          id="recurrence"
+          name="recurrence"
+          value={formData.recurrence}
+          onChange={handleChange}
+        >
+          <option value="">Selecione...</option>
           <option value="diária">Diária</option>
           <option value="semanal">Semanal</option>
           <option value="mensal">Mensal</option>
@@ -103,44 +123,46 @@ const handleSubmit = async (e: React.FormEvent) => {
         </select>
       </div>
 
-      {formData.recurrence === 'custom' && (
+      {/* {formData.recurrence === 'personalizada' && (
         <div>
-          <label>Dias personalizados</label>
+          <label htmlFor="custom_days">Dias personalizados</label>
           <textarea
+            id="custom_days"
             name="custom_days"
             value={formData.custom_days.join(', ')}
             onChange={handleChange}
             placeholder="Ex: segunda, quarta, sexta"
           />
         </div>
-      )}
+      )} */}
 
       <div>
-        <label>Status</label>
-        <select name="status" value={formData.status} onChange={handleChange}>
-          <option value="pendente">Pendente</option>
-          <option value="feito">Feito</option>
-          <option value="não feito">Não Feito</option>
-        </select>
+        <label htmlFor="username">Responsável</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          placeholder="Digite o nome do responsável pela tarefa"
+        />
       </div>
 
       <div>
-        <label>Nome de usuário</label>
-
-        <select name="username" value={formData.username} onChange={handleChange}>
-          <option value="teste"></option>
-
-        </select>
-      </div>
-
-
-
-      <div>
-        <textarea placeholder='Comentário' name="comment" value={formData.comment} onChange={handleChange}></textarea>
+        <label htmlFor="comment">Comentário</label>
+        <textarea
+          id="comment"
+          name="comment"
+          value={formData.comment}
+          onChange={handleChange}
+          placeholder="Comentário"
+        />
       </div>
 
       <div>
-        <button type="submit" disabled={isSubmitting} className="modal-button" >Criar Tarefa</button>
+        <button type="submit" disabled={isSubmitting} className="modal-button">
+          Criar Tarefa
+        </button>
       </div>
     </form>
   );

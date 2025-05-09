@@ -1,17 +1,10 @@
-// src/components/TaskList.tsx
 import React, { useState } from 'react';
 import { Task } from '../types/Task';
 import { useTasks } from '../hooks/useTask';
 import ModalTaskActions from './ModalTaskActions';
 
-interface TaskListProps {
-  tasks: Task[];
-  loading: boolean;
-  error: string | null;
-}
-
-const TaskList: React.FC<TaskListProps> = ({ tasks, loading, error }) => {
-  const { removeTask } = useTasks();
+const TaskList: React.FC = () => {
+  const { tasks, loading, error, removeTask, updateTaskStatus } = useTasks();
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
@@ -29,15 +22,18 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, loading, error }) => {
     custom: 'Personalizada',
   };
 
-  const statusMap: Record<string, string> = {
-    pending: 'Pendente',
-    done: 'Feito',
-    'not done': 'Não Feito',
-  };
-
   const handleTaskClick = (task: Task) => {
     setSelectedTask(task);
     setIsActionsOpen(true);
+  };
+
+  const handleStatusChange = async (task: Task) => {
+    if (task.id !== undefined) {
+      const newStatus = task.status === 'done' ? 'pending' : 'done'; // Alterna entre 'feito' e 'pendente'
+      await updateTaskStatus(task.id, newStatus);
+    } else {
+      console.error('ID da tarefa não encontrado');
+    }
   };
 
   if (loading) return <p>Carregando tarefas...</p>;
@@ -47,26 +43,28 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, loading, error }) => {
     <>
       <ul>
         {tasks.map((task: Task) => (
-          <li
-            key={task.id}
-            className="task-item cursor-pointer hover:bg-gray-100 p-2 rounded"
-            onClick={() => handleTaskClick(task)}
-          >
-            <div className="task-details space-y-1">
-              <p><strong>Prioridade:</strong> {priorityMap[task.priority]}</p>
-              <p><strong>Nome:</strong> {task.name}</p>
-              <p><strong>Usuário:</strong> {task.username}</p>
-              <p><strong>Status:</strong> {statusMap[task.status]}</p>
-              <p><strong>Comentário:</strong> {task.comment}</p>
-              <p><strong>Recorrência:</strong> {recurrenceMap[task.recurrence]}</p>
-              <p><strong>Dias Personalizados:</strong> {task.custom_days?.join(', ') || 'N/A'}</p>
-              <p><strong>Avaliação:</strong> {task.rating}</p>
+          <li key={task.id} className="task-item">
+            <div className="task-details">
+              <div className="status-div">
+                <button
+                  onClick={() => handleStatusChange(task)}
+                  className={`status-button ${task.status === 'done' ? 'done' : 'pending'}`}
+                >
+                  {task.status === 'done' ? 'Feita' : 'Pendente'}
+                </button>
+              </div>
+              <div className="task-details" onClick={() => handleTaskClick(task)}>
+                <p>{priorityMap[task.priority]}</p>
+                <p>{task.name}</p>
+                <p>{task.username}</p>
+                <p>{recurrenceMap[task.recurrence]}</p>
+                <p>{task.comment}</p>
+                <p>{task.rating}</p>
+              </div>
             </div>
           </li>
         ))}
       </ul>
-
-<div >
 
       {selectedTask && (
         <ModalTaskActions
@@ -79,7 +77,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, loading, error }) => {
           }}
         />
       )}
-</div>
     </>
   );
 };

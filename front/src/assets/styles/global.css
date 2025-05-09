@@ -16,7 +16,7 @@
 /* Reset e base */
 * {
   margin: 0;
-  padding: 0.1rem;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -28,12 +28,14 @@ body {
   padding: 0;
   overflow-x: hidden;
   opacity: 0.9;
-  
+  height: 100%;
+  width: 100%;
 }
 
 
 
-h1, h2 {
+h1,
+h2 {
   color: var(--color-text);
 
 }
@@ -77,17 +79,19 @@ textarea::placeholder {
 }
 
 
-
-
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid var(--color-text);
   padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   color: var(--color-text);
+  margin: 0;
+}
+
+header h1 {
+  padding: 0.5rem;
 }
 
 label {
@@ -101,7 +105,8 @@ label {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Tela opaca */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Tela opaca */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,7 +133,8 @@ form {
 
 .modal-button {
   display: block;
-  margin: 10px auto 0; /* Centraliza horizontalmente e dá espaço acima */
+  margin: 10px auto 0;
+  /* Centraliza horizontalmente e dá espaço acima */
   padding: 4px 8px;
   background-color: var(--color-primary);
   color: white;
@@ -141,25 +147,11 @@ form {
 }
 
 button:hover {
-  background: linear-gradient(135deg, #6D28D9, #3B82F6);
+  background: linear-gradient(135deg, #561c24, #e8d8c4);
 
 }
 
 
-.delete-button {
-  background: transparent;
-  border: none;
-  color: #d11a2a;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  margin-left: 8px;
-  padding: 2px;
-}
-
-.delete-button:hover {
-  color: #a50e1d;
-}
 
 
 .delete-button:hover {
@@ -168,7 +160,8 @@ button:hover {
 
 .button-createTask {
   display: block;
-  margin: 10px auto 0; /* Centraliza horizontalmente e dá espaço acima */
+  margin: 5px auto 0;
+  /* Centraliza horizontalmente e dá espaço acima */
   padding: 4px 8px;
   background-color: var(--color-secondary);
   color: var(--color-text);
@@ -179,8 +172,25 @@ button:hover {
   transition: background-color 0.3s ease;
   width: 20%;
   color: var(--color-white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
+.button-updateTask {
+  display: block;
+  margin: 10px auto 0;
+  /* Centraliza horizontalmente e dá espaço acima */
+  padding: 4px 8px;
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  color: var(--color-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
 
 .task-item {
   border-bottom: 0px solid rgba(255, 255, 255, 0.15);
@@ -224,11 +234,13 @@ ul {
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  margin-bottom: 1rem;
+  margin: 2rem auto; 
   background-color: var(--color-four);
   border-radius: 8px;
   color: var(--color-text);
   opacity: 0.9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  width: 95%;
 }
 
 .task-item strong {
@@ -242,14 +254,17 @@ ul {
   overflow-x: auto;
   gap: 1rem;
   white-space: nowrap;
+  align-items: center;
 }
+
 
 .task-details p {
   margin: 0;
   flex-shrink: 0;
   min-width: max-content;
+  width: 25px;
+  text-align: center;
 }
-
 
 .modal {
   position: fixed;
@@ -259,12 +274,53 @@ ul {
   background: white;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   z-index: 1000;
 }
+
 .hidden {
   display: none;
 }
+
 .show {
   display: block;
+}
+
+.checkbox-container {
+  width: 100%;
+
+}
+.status-div {
+  width: 90px; /* Tamanho fixo da div que envolve o botão */
+  height: 35px; /* Tamanho fixo da div (opcional, dependendo da altura do botão) */
+  display: flex; /* Usando flex para alinhar o conteúdo */
+  justify-content: center; /* Centraliza o botão horizontalmente */
+  align-items: center; /* Centraliza o botão verticalmente */
+}
+
+.status-button {
+  padding: 0.35rem 0.75rem; /* Padding interno */
+  border-radius: 0.55rem;   /* Borda arredondada */
+  color: var(--color-primary); /* Cor do texto */
+  font-size: 0.875rem;      /* Tamanho do texto */
+  font-weight: 900;         /* Peso da fonte */
+  transition: background-color 0.2s; /* Transição para mudança de cor */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Sombra para o botão */
+  
+  width: 100%; /* O botão vai ocupar toda a largura da div, mas podemos ajustar para um tamanho fixo */
+  max-width: 120px; /* Tamanho máximo para o botão */
+  height: 30px; /* Definindo uma altura fixa */
+  text-align: center; /* Alinha o texto no centro */
+ 
+}
+
+.status-button.done {
+  background-color: var(--color-primary); /* Cor do fundo para status "Feita" */
+  color: var(--color-white); /* Cor do texto para status "Feita" */
+}
+
+.status-button.pending {
+  background-color: var(--color-bg); /* Cor do fundo para status "Pendente" */
+  border: 1px solid var(--color-primary); /* Borda do botão */
 }

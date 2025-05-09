@@ -56,5 +56,18 @@ export const updateTask = async (updatedTask: Task) => {
   }
 };
 
+// Nova função para atualizar o status de uma tarefa
+export const updateTaskStatus = async (task_Id: number, status: string) => {
+  try {
+    const response = await api.put(`/tasks/${task_Id}/status`, { status });  // já está correto
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao atualizar status da tarefa', error);
+    throw error;
+  }
+};
+
+
+
 
 export default api;

@@ -10,7 +10,7 @@ const TaskPage: React.FC = () => {
   return (
     <>
       <Header onTaskCreated={refetch} />
-      <TaskList tasks={tasks} loading={loading} error={error} />
+      <TaskList/>
     </>
   );
 };

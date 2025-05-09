@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from enum import Enum
 
+
 class PriorityEnum(str, Enum):
     high = "high"
     medium = "medium"
@@ -18,6 +19,10 @@ class StatusEnum(str, Enum):
     pending = "pending"
     not_done = "not done"
 
+
+class StatusUpdate(BaseModel):
+    status: StatusEnum
+
 class TaskBase(BaseModel):
     name: str
     priority: PriorityEnum
@@ -28,6 +33,7 @@ class TaskBase(BaseModel):
     rating: Optional[float] = None
     comment: Optional[str] = None
 
+    
 class TaskCreate(TaskBase):
     pass
 
@@ -41,8 +47,10 @@ class TaskUpdate(BaseModel):
     rating: Optional[float] = None
     comment: Optional[str] = None
 
+
 class Task(TaskBase):
     id: int
 
-    class Config:
-        orm_mode = True
+class Config:
+    orm_mode = True 
+

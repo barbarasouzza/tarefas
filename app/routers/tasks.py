@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.task import Task as TaskModel
-from app.schemas.task import TaskCreate, TaskUpdate, Task
-from app.database import get_db
+from app.schemas.task import TaskCreate, TaskUpdate, Task, StatusUpdate
+from app.database import get_db, SessionLocal
 from typing import List
+from app import crud, models, schemas
 
 router = APIRouter()
 
@@ -66,4 +67,37 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.commit()
     return task
 
+@router.put("/{task_id}/status")
+async def update_task_status(
+    task_id: int,
+    status_update: StatusUpdate,
+    db: Session = Depends(get_db)
+):
+    # Corrigido para usar TaskModel em vez de Task
+    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
 
+    if task.status == status_update.status:
+        raise HTTPException(status_code=400, detail="O status da tarefa já está como o valor informado")
+
+    task.status = status_update.status
+    db.commit()
+    db.refresh(task)
+    return {"message": "Status da tarefa atualizado com sucesso", "task": task}
+
+
+# Rota para buscar as prioridades
+@router.get("/priority")
+def get_prioridades(db: Session = Depends(get_db)):
+    return db.query(models.Prioridade).all()
+
+# Rota para buscar as recorrências
+@router.get("/recurrence")
+def get_recorrencias(db: Session = Depends(get_db)):
+    return db.query(models.Recorrencia).all()
+
+# Rota para buscar os usuários (vai retornar uma lista de todos os usuários cadastrados)
+@router.get("/username")
+def get_usuarios(db: Session = Depends(get_db)):
+    return db.query(models.Usuario).all()

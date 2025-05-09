@@ -21,12 +21,27 @@ const ModalTaskActions: React.FC<ModalTaskActionsProps> = ({
     const { removeTask, updateTask } = useTasks();
     const [editedTask, setEditedTask] = useState<Task>(task);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setEditedTask((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+
+        if (name === 'custom_days') {
+            setEditedTask((prev) => ({
+                ...prev,
+                custom_days: value.split(',').map((d) => d.trim()),
+            }));
+        } else {
+            setEditedTask((prev) => ({
+                ...prev,
+                [name]: name === 'rating' ? Number(value) : value,
+            }));
+        }
+    };
+
+    const handleClickOutside = (e: React.MouseEvent) => {
+        if (e.target instanceof Element && e.target.closest('.modal-content')) {
+            return;
+        }
+        onClose();
     };
 
     const handleDelete = async () => {
@@ -52,89 +67,94 @@ const ModalTaskActions: React.FC<ModalTaskActionsProps> = ({
     };
 
     useEffect(() => {
-        setEditedTask(task);
+        if (task) {
+            setEditedTask(task);
+        }
     }, [task, isOpen]);
 
     if (!isOpen) return null;
 
     return (
-
-
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleClickOutside}>
             <div className="modal-content">
                 <div>
-                    <h2 >Editar Tarefa: {task.name}</h2>
+                    <h2>Editar Tarefa: {task.name}</h2>
 
-                    <div >
+                    <div>
+                        <label htmlFor="name">Tarefa</label>
                         <input
+                            id="name"
                             type="text"
                             name="name"
                             value={editedTask.name}
                             onChange={handleChange}
-
                             placeholder="Nome da Tarefa"
+                            required
                         />
-                        <input
-                            type="text"
+
+                        <label htmlFor="priority">Prioridade</label>
+                        <select
+                            id="priority"
                             name="priority"
                             value={editedTask.priority}
                             onChange={handleChange}
+                        >
+                            <option value="alta">Alta</option>
+                            <option value="média">Média</option>
+                            <option value="baixa">Baixa</option>
+                        </select>
 
-                            placeholder="Prioridade"
-                        />
+                        <label htmlFor="username">Usuário</label>
                         <input
+                            id="username"
                             type="text"
                             name="username"
                             value={editedTask.username}
                             onChange={handleChange}
-
                             placeholder="Nome do Usuário"
                         />
-                        <input
-                            type="text"
-                            name="status"
-                            value={editedTask.status}
-                            onChange={handleChange}
 
-                            placeholder="Status"
-                        />
-                        <input
-                            type="text"
+                        <label htmlFor="recurrence">Recorrência</label>
+                        <select
+                            id="recurrence"
                             name="recurrence"
                             value={editedTask.recurrence}
                             onChange={handleChange}
+                        >
+                            <option value="diária">Diária</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="mensal">Mensal</option>
+                            <option value="personalizada">Personalizada</option>
+                        </select>
 
-                            placeholder="Recorrência"
-                        />
-                        <input
-                            type="text"
+                        {/* {editedTask.recurrence === 'personalizada' && (
+                            <div>
+                                <label htmlFor="custom_days">Dias personalizados</label>
+                                <textarea
+                                    id="custom_days"
+                                    name="custom_days"
+                                    value={editedTask.custom_days?.join(', ') || ''}
+                                    onChange={handleChange}
+                                    placeholder="Ex: segunda, quarta, sexta"
+                                />
+                            </div>
+                        )} */}
+
+                        <label htmlFor="comment">Comentário</label>
+                        <textarea
+                            id="comment"
                             name="comment"
                             value={editedTask.comment}
                             onChange={handleChange}
-
                             placeholder="Comentário"
                         />
                     </div>
 
-                    <div >
-                        <button
-
-                            onClick={handleEdit}
-                        >
-                            Salvar
-                        </button>
-                        <button
-                            onClick={handleDelete}
-                        >
-                            Excluir
-                        </button>
+                    <div>
+                        <button className='button-updateTask' onClick={handleEdit}>Salvar</button>
+                        <button className='button-updateTask' onClick={handleDelete}>Excluir</button>
+                        <button className='button-updateTask' onClick={onClose}>Cancelar</button>
                     </div>
-
-                    <button
-                        onClick={onClose}
-                    >
-                        Cancelar
-                    </button>
                 </div>
             </div>
         </div>

@@ -18,6 +18,8 @@ const Header: React.FC<HeaderProps> = ({ onTaskCreated }) => {
 
   return (
     <header className='header'>
+
+      
       <h1>Tarefas</h1>
       <button className='button-createTask' onClick={() => setIsCreateOpen(true)}>
         Criar
