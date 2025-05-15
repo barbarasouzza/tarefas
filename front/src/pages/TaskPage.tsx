@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import TaskList from '../components/TaskList';
+import CreateTaskForm from '../components/CreateTaskForm';
 import { useTasks } from '../hooks/useTask';
 
 const TaskPage: React.FC = () => {
@@ -10,7 +11,8 @@ const TaskPage: React.FC = () => {
   return (
     <>
       <Header onTaskCreated={refetch} />
-      <TaskList/>
+      <TaskList />
+
     </>
   );
 };

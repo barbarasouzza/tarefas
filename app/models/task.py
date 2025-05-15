@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Enum, Text, Float, ARRAY
+from sqlalchemy import Column, Integer, String, Enum, Text, Float, ARRAY, Date, Time
 from app.database import Base
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -14,6 +14,10 @@ class Task(Base):
     username = Column(String(50), nullable=False)
     rating = Column(Float, nullable=True)
     comment = Column(Text, nullable=True)
+    next_due_date = Column(Date, nullable=True)
+    reminder_time = Column(Time, nullable=True)
+
+    evaluations = relationship("Evaluation", back_populates="task", cascade="all, delete")
 
     @validates('rating')
     def validate_rating(self, key, value):

@@ -12,5 +12,7 @@ export interface Task {
   username: string;
   rating: number;
   comment: string;
+  next_due_date: string;
+  reminder_time: string;
 }
 

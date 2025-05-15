@@ -27,7 +27,7 @@ export function useTasks() {
   const removeTask = async (id: number) => {
     try {
       await deleteTask(id);
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id)); // Removendo do estado diretamente
+      setTasks((prev) => prev.filter((task) => task.id !== id));
     } catch (err) {
       console.error('Erro ao excluir tarefa:', err);
     }
@@ -35,12 +35,12 @@ export function useTasks() {
 
   const updateTaskStatusHandler = async (
     taskId: number,
-    status: 'done' | 'pending' | 'not done'
+    status: Task['status']
   ) => {
     try {
       await updateTaskStatus(taskId, status);
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
+      setTasks((prev) =>
+        prev.map((task) =>
           task.id === taskId ? { ...task, status } : task
         )
       );
@@ -51,9 +51,9 @@ export function useTasks() {
 
   const updateTaskHandler = async (updatedTask: Task) => {
     try {
-      await updateTask(updatedTask); // Chama o updateTask da API
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
+      await updateTask(updatedTask);
+      setTasks((prev) =>
+        prev.map((task) =>
           task.id === updatedTask.id ? updatedTask : task
         )
       );
@@ -62,13 +62,14 @@ export function useTasks() {
     }
   };
 
-  // Função para adicionar nova tarefa
-  const addTask = async (newTask: Task) => {
+  const addTask = async (newTask: Task): Promise<Task | null> => {
     try {
-      const createdTask = await createTask(newTask); // Adiciona a tarefa via API
-      setTasks((prevTasks) => [...prevTasks, createdTask]); // Adiciona a tarefa criada no estado local
+      const createdTask = await createTask(newTask);
+      setTasks((prev) => [...prev, createdTask]);
+      return createdTask;
     } catch (err) {
       console.error('Erro ao adicionar tarefa:', err);
+      return null;
     }
   };
 
@@ -79,7 +80,8 @@ export function useTasks() {
     removeTask,
     updateTask: updateTaskHandler,
     updateTaskStatus: updateTaskStatusHandler,
-    addTask, // Função de adicionar tarefa
-    refetch: loadTasks, // Aqui está o `refetch`
+    addTask,
+    refetch: loadTasks,
   };
 }
+

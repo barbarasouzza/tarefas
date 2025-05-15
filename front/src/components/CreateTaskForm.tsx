@@ -4,10 +4,11 @@ import { Task } from '../types/Task';
 
 interface CreateTaskFormProps {
   onCreate: (newTask: Task) => void | Promise<void>;
+  onTaskCreated: () => void;
   onClose: () => void;
 }
 
-const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) => {
+const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose, onTaskCreated }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Task>({
     id: undefined,
@@ -19,6 +20,8 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
     username: '',
     rating: 1,
     comment: '',
+    next_due_date: "",
+    reminder_time: "",
   });
 
   const priorityMap = {
@@ -43,6 +46,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     try {
       const translatedTask: Task = {
         ...formData,
@@ -53,6 +57,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
 
       await createTask(translatedTask);
       await onCreate(translatedTask);
+      onTaskCreated();
       onClose();
     } catch (error) {
       console.error('Erro ao criar tarefa:', error);
@@ -89,11 +94,12 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
           value={formData.name}
           onChange={handleChange}
           required
+          placeholder='Nome da tarefa'
         />
       </div>
 
       <div>
-        <label htmlFor="priority">Prioridade</label>
+        <label htmlFor="priority">Prioridade: </label>
         <select
           id="priority"
           name="priority"
@@ -108,7 +114,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
       </div>
 
       <div>
-        <label htmlFor="recurrence">Recorrência</label>
+        <label htmlFor="recurrence">Recorrência: </label>
         <select
           id="recurrence"
           name="recurrence"
@@ -122,6 +128,27 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
           <option value="personalizada">Personalizada</option>
         </select>
       </div>
+
+      <div>
+        <label>Próxima Data</label>
+        <input
+          type="date"
+          name="next_due_date"
+          value={formData.next_due_date}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <label>Horário do Lembrete</label>
+        <input
+          type="time"
+          name="reminder_time"
+          value={formData.reminder_time}
+          onChange={handleChange}
+        />
+      </div>
+
 
       {/* {formData.recurrence === 'personalizada' && (
         <div>
@@ -137,7 +164,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
       )} */}
 
       <div>
-        <label htmlFor="username">Responsável</label>
+
         <input
           id="username"
           type="text"
@@ -149,7 +176,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onCreate, onClose }) =>
       </div>
 
       <div>
-        <label htmlFor="comment">Comentário</label>
+
         <textarea
           id="comment"
           name="comment"

@@ -24,6 +24,8 @@ export const createTask = async (taskData: {
   username: string;
   rating: number;
   comment: string;
+  next_due_date?: string;
+  reminder_time?: string;
 }) => {
   try {
     const response = await api.post('/tasks', taskData);
@@ -42,7 +44,7 @@ export const deleteTask = async (id: number) => {
     console.log("Erro ao deletar tarefa", error);
     throw error;
   }
-  
+
 };
 
 
@@ -67,7 +69,13 @@ export const updateTaskStatus = async (task_Id: number, status: string) => {
   }
 };
 
-
+export const fetchEvaluationTasks = async (username: string) => {
+  const response = await fetch(`http://localhost:8000/tasks/for-evaluation?username=${username}`);
+  if (!response.ok) {
+    throw new Error("Erro ao buscar tarefas para avaliação");
+  }
+  return response.json();
+};
 
 
 export default api;

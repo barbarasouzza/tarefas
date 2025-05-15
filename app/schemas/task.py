@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from enum import Enum
+from datetime import date, time
 
 
 class PriorityEnum(str, Enum):
@@ -23,6 +24,7 @@ class StatusEnum(str, Enum):
 class StatusUpdate(BaseModel):
     status: StatusEnum
 
+
 class TaskBase(BaseModel):
     name: str
     priority: PriorityEnum
@@ -32,10 +34,13 @@ class TaskBase(BaseModel):
     username: str
     rating: Optional[float] = None
     comment: Optional[str] = None
+    next_due_date: Optional[date] = None
+    reminder_time: Optional[time] = None
 
-    
+
 class TaskCreate(TaskBase):
     pass
+
 
 class TaskUpdate(BaseModel):
     name: Optional[str] = None
@@ -46,11 +51,12 @@ class TaskUpdate(BaseModel):
     username: Optional[str] = None
     rating: Optional[float] = None
     comment: Optional[str] = None
+    next_due_date: Optional[date] = None
+    reminder_time: Optional[time] = None
 
 
 class Task(TaskBase):
     id: int
 
-class Config:
-    orm_mode = True 
-
+    class Config:
+        from_attributes = True
