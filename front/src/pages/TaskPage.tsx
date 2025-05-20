@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import TaskList from '../components/TaskList';
-import CreateTaskForm from '../components/CreateTaskForm';
+import CreateTaskForm from '../components/TaskList';
 import { useTasks } from '../hooks/useTask';
 
 const TaskPage: React.FC = () => {

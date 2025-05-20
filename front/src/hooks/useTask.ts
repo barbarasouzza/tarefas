@@ -11,6 +11,7 @@ export function useTasks() {
     setLoading(true);
     try {
       const data = await fetchTasks();
+      console.log('[FETCH TASKS] Dados recebidos da API:', data);
       setTasks(data);
       setError(null);
     } catch (err) {

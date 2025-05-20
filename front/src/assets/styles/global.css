@@ -41,6 +41,8 @@ h2 {
 }
 
 p {
+  color: var(--color-secondary);
+  font-size: large;
   font-weight: bold;
 }
 
@@ -199,25 +201,25 @@ button:hover {
   width: 20%;
   color: var(--color-white);
   box-shadow: 1px 4px 4px rgba(0, 0, 0, 0.6);
+  font-weight: bold;
 }
 
-.task-item {
-  border-bottom: 0px solid rgb(236, 10, 10);
-  background-color: var(--color-bg);
-  border-radius: 8px;
-}
 
 
 ul {
   list-style: none;
   padding: 0;
-  width: 95%;
+  width: 90%;
   height: 100%;
   justify-content: center;
-  padding: 1%;
-  margin: 40px auto;
   border-radius: 20px;
 
+}
+
+span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .task-row {
@@ -229,6 +231,10 @@ ul {
 
 .task-title {
   margin-bottom: 0.5rem;
+}
+
+.task-name {
+  font-weight: bold;
 }
 
 .task-details-scroll {
@@ -248,14 +254,17 @@ ul {
 .task-item {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  margin: 1rem auto;
+  padding: 0.8rem;
+  margin: 0.9rem auto;
   background-color: var(--color-four);
   border-radius: 8px;
   color: var(--color-text);
   box-shadow: 2px 6px 6px rgba(0, 0, 0, 0.6);
-  width: 95%;
+  width: 98%;
+
 }
+
+
 
 .task-item strong {
   margin-bottom: 0.5rem;
@@ -271,13 +280,63 @@ ul {
   align-items: center;
 }
 
+.task-header {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  white-space: nowrap;
+  align-items: center;
+}
 
-.task-details p {
-  margin: 0;
+.task-body button {
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.55rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  transition: background-color 0.2s;
+  background-color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: 0.1px 6px 5px rgba(0, 0, 0, 0.3);
+  width: 95px;
+  /* Tamanho fixo */
+  height: 30px;
+  /* Altura fixa */
+  text-align: center;
+  white-space: nowrap;
+  color: var(--color-bg);
+  font-weight: bold;
+}
+
+.task-body p {
+  margin: 4px;
   flex-shrink: 0;
   min-width: max-content;
-  width: 25px;
+
   text-align: center;
+  color: var(--color-secondary);
+}
+
+.task-body {
+  display: flex;
+  flex-direction: column;
+  /* Para empilhar os <p> e botão em coluna */
+  justify-content: center;
+  /* Centraliza verticalmente */
+  align-items: center;
+  /* Centraliza horizontalmente */
+  /* Espaço entre os elementos */
+  /* Espaço interno */
+  text-align: center;
+  /* Centraliza o texto dentro dos <p> */
+  width: 100%;
+  word-break: break-word;
+  overflow-x: auto;
+
+}
+
+.task-label strong {
+  font-size: small;
 }
 
 .modal {
@@ -307,57 +366,40 @@ ul {
 
 .status-div {
   width: 90px;
-  /* Tamanho fixo da div que envolve o botão */
   height: 35px;
-  /* Tamanho fixo da div (opcional, dependendo da altura do botão) */
   display: flex;
-  /* Usando flex para alinhar o conteúdo */
   justify-content: center;
-  /* Centraliza o botão horizontalmente */
   align-items: center;
-  /* Centraliza o botão verticalmente */
+  flex-shrink: 0;
+  /* Evita que a div encolha */
 }
 
 .status-button {
   padding: 0.35rem 0.75rem;
-  /* Padding interno */
   border-radius: 0.55rem;
-  /* Borda arredondada */
-  color: var(--color-primary);
-  /* Cor do texto */
   font-size: 0.875rem;
-  /* Tamanho do texto */
   font-weight: 900;
-  /* Peso da fonte */
   transition: background-color 0.2s;
-  /* Transição para mudança de cor */
   cursor: pointer;
-  box-shadow: 0.1px 6px 5px rgba(0, 0, 0, 0.6);
-  /* Sombra para o botão */
-
-  width: 100%;
-  /* O botão vai ocupar toda a largura da div, mas podemos ajustar para um tamanho fixo */
-  max-width: 120px;
-  /* Tamanho máximo para o botão */
+  box-shadow: 0.1px 6px 5px rgba(0, 0, 0, 0.2);
+  width: 95px;
+  /* Tamanho fixo */
   height: 30px;
-  /* Definindo uma altura fixa */
+  /* Altura fixa */
   text-align: center;
-  /* Alinha o texto no centro */
+  white-space: nowrap;
 
 }
 
 .status-button.done {
   background-color: var(--color-primary);
-  /* Cor do fundo para status "Feita" */
   color: var(--color-white);
-  /* Cor do texto para status "Feita" */
 }
 
 .status-button.pending {
-  background-color: var(--color-bg);
-  /* Cor do fundo para status "Pendente" */
+
   border: 1px solid var(--color-primary);
-  /* Borda do botão */
+  color: var(--color-primary);
 }
 
 .searchbar {
@@ -405,14 +447,6 @@ ul {
   border-radius: 6px;
   padding: 3px;
 }
-
-.filters-container {
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-  justify-content: center;
-}
-
 
 .save-filter-button {
   width: 100%;
@@ -574,7 +608,22 @@ ul {
 
 .modal-eval-button-container {
   display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  gap: 10px;               /* Espaço entre os botões */
-  margin-top: 20px;        /* Espaço acima dos botões */
+  justify-content: center;
+  /* Centraliza horizontalmente */
+  gap: 10px;
+  /* Espaço entre os botões */
+  margin-top: 20px;
+  /* Espaço acima dos botões */
+}
+
+.modal-recurrence {
+  width: 95%;
+
+}
+
+.filter-modal {
+  margin: 0.2%;
+  padding: 2%;
+  border-top: 1px solid var(--color-secondary);
+  border-bottom: 1px solid var(--color-secondary);
 }

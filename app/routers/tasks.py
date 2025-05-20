@@ -1,16 +1,21 @@
+from datetime import date, datetime, timedelta
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+
+from app.database import get_db
 from app.models.task import Task as TaskModel
 from app.schemas.task import Task as TaskSchema, TaskCreate, TaskUpdate, StatusUpdate
-from app.database import get_db
 from app import models
+
 
 router = APIRouter()
 
 @router.post("/", response_model=TaskSchema)
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
-    db_task = TaskModel(**task.dict())
+    db_task = TaskModel(**task.dict(exclude_unset=True))
+
     if task.custom_days:
         db_task.custom_days = task.custom_days  # já é lista, sem json.dumps
     db.add(db_task)
@@ -44,6 +49,72 @@ def get_tasks_for_evaluation(
 def read_tasks(db: Session = Depends(get_db)):
     tasks = db.query(TaskModel).all()
     return tasks
+
+
+@router.get("/upcoming", response_model=List[TaskSchema])
+def get_upcoming_tasks(
+    filter_by: str = Query(
+        None, regex="^(daily|weekly|monthly|custom)?$", description="Filter by recurrence"
+    ),
+    db: Session = Depends(get_db),
+):
+    today = date.today()
+    weekday_name = today.strftime("%A")  # Exemplo: 'Monday', 'Tuesday'...
+
+    query = db.query(TaskModel).filter(TaskModel.status != "done")
+
+    if filter_by == "daily":
+        # Tarefas com recurrence daily e próximas (>= hoje)
+        query = query.filter(TaskModel.recurrence == "daily", TaskModel.next_due_date >= today)
+    elif filter_by == "weekly":
+        next_week = today + timedelta(days=7)
+        query = query.filter(
+            TaskModel.recurrence == "weekly",
+            TaskModel.next_due_date >= today,
+            TaskModel.next_due_date <= next_week,
+        )
+    elif filter_by == "monthly":
+        next_month = today + timedelta(days=30)
+        query = query.filter(
+            TaskModel.recurrence == "monthly",
+            TaskModel.next_due_date >= today,
+            TaskModel.next_due_date <= next_month,
+        )
+    elif filter_by == "custom":
+        # Pega todas as tarefas com recurrence custom e próximas
+        all_custom_tasks = query.filter(TaskModel.recurrence == "custom", TaskModel.next_due_date >= today).all()
+
+        # Filtra só as que têm o dia da semana de hoje dentro do custom_days
+        tasks = []
+        for task in all_custom_tasks:
+            if task.custom_days and weekday_name in task.custom_days:
+                tasks.append(task)
+
+        if not tasks:
+            raise HTTPException(status_code=404, detail="No upcoming custom tasks found")
+
+        return tasks
+
+    else:
+        # Se não informou filtro, traz todas pendentes com next_due_date a partir de hoje
+        query = query.filter(TaskModel.next_due_date >= today)
+
+    tasks = query.order_by(TaskModel.next_due_date.asc()).all()
+
+    if not tasks:
+        raise HTTPException(status_code=404, detail="No upcoming tasks found")
+
+    return tasks
+
+# Rotas auxiliares para prioridades e recorrências
+@router.get("/priority")
+def get_prioridades(db: Session = Depends(get_db)):
+    return db.query(models.Prioridade).all()
+
+@router.get("/recurrence")
+def get_recorrencias(db: Session = Depends(get_db)):
+    return db.query(models.Recorrencia).all()
+
 
 @router.get("/{task_id}", response_model=TaskSchema)
 def read_task(task_id: int, db: Session = Depends(get_db)):
@@ -95,11 +166,4 @@ async def update_task_status(
     db.refresh(task)
     return {"message": "Status da tarefa atualizado com sucesso", "task": task}
 
-# Rotas auxiliares para prioridades e recorrências
-@router.get("/priority")
-def get_prioridades(db: Session = Depends(get_db)):
-    return db.query(models.Prioridade).all()
 
-@router.get("/recurrence")
-def get_recorrencias(db: Session = Depends(get_db)):
-    return db.query(models.Recorrencia).all()
